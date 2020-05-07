@@ -54,12 +54,19 @@ router.post('/' , authMiddleware , (req,res)=>{
 router.patch('/:listid', authMiddleware , (req,res)=>{
      var title = req.body.title
      var id = req.params.listid;
-     List.findByIdAndUpdate(id , { $set : { title : title } }, { new : true} ).exec()
-     .then(doc=>{
-          res.status(200).json(doc)
-     }).catch(err=>{
-          res.status(501).json(err.message)
-     })
+     if(title == ""){
+          res.status(501).json("Title is required")
+     }else{
+          List.findByIdAndUpdate(id , { $set : { title : title } }, { new : true } ).exec()
+          .then(doc=>{
+               if(doc.title )
+                    res.status(200).json(doc)
+               else
+                    throw Error('Title is empty')
+          }).catch(err=>{
+               res.status(501).json(err.message)
+          })
+     }
 })
 // DELETE A SINGLE LIST
 router.delete('/:listid', authMiddleware, (req,res)=>{
