@@ -5,9 +5,8 @@ module.exports = (req,res,next)=>{
                return res.status(500).json({message  : "Internal server error" ,err : err.message})
           }
           if(!user){
-               redirectRoute = "";
                return res.status(401).json({message : "This route is protected" , 
-                         info : info , redirectRoute : redirectRoute })
+                         info : info })
           }
           if(user){
                req.user = user

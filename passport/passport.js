@@ -12,7 +12,7 @@ var verifyCallbacks = (payload , done)=>{
      User.findOne({ _id : payload.sub } ).exec()
      .then(user=>{
           if(user){
-                return done(null, user, { message : "user found in database"} )
+                return done(null, user, { message : "User logged-in"} )
           }
           else {
                return done(null , false )
