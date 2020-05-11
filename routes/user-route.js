@@ -2,6 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user-model');
+const authMiddleware = require('../utils/auth-middleware')
 
 router.post('/signup' , async (req,res)=>{
      var { username , email, password } = req.body;
@@ -39,13 +40,26 @@ router.post('/login' , async  (req,res)=>{
                               email : user.email
                          }
                          var jsontoken = await jwt.sign( payload , process.env.PUBLIC_SECRET, { expiresIn : '1h' } )
-                         res.status(200).json({ message : 'user found' ,  token : 'Bearer '+ jsontoken })
+                         res.status(200).json({ message : 'user found', theme : user.theme ,  token : 'Bearer '+ jsontoken })
                     }else res.status(401).json({ message : 'incorrect username or password '})
                }else res.status(401).json({message : 'user not found ' }) 
           }catch(err){
                res.status(501).json(err.message)
           }
      } else res.status(400).json({message : 'bad request'})
+})
+// update user
+router.patch('/update', authMiddleware , async (req,res)=>{
+     try{
+          let updatedUser = await User.findByIdAndUpdate(req.user._id, req.body , { new : true} )
+          if(updatedUser){
+               res.status(200).json('updated successfully')
+          }else{
+               new Error('request not completed')
+          }
+     }catch(err){
+          res.status(501).json(err.message)
+     }
 })
  
 module.exports = router
