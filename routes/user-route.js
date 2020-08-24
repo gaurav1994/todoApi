@@ -23,7 +23,6 @@ router.post('/signup' , async (req,res)=>{
 router.post('/login' , async  (req,res)=>{
      var username = req.body.username
      var password = req.body.password
-     if(username != undefined && password != undefined ){
           try{
                var user =  await User.findOne( { username : username }).exec()
                if(user){
@@ -34,20 +33,42 @@ router.post('/login' , async  (req,res)=>{
                               username : user.username,
                               email : user.email
                          }
-                         let userRes = {
-                              _id : user._id,
-                              username : user.username,
-                              email : user.email
-                         }
-                         var jsontoken = await jwt.sign( payload , process.env.PUBLIC_SECRET, { expiresIn : '1h' } )
-                         res.status(200).json({ message : 'user found', theme : user.theme ,  token : 'Bearer '+ jsontoken })
+                         var jsontoken = await jwt.sign( payload , process.env.PUBLIC_SECRET, { expiresIn : '50s' } )
+                         var refreshToken = await generateRefreshToken(user, payload)
+                         res.status(200).json({ message : 'user found', theme : user.theme ,  
+                                                            token : 'Bearer '+ jsontoken , refreshToken : refreshToken })
                     }else res.status(401).json({ message : 'incorrect username or password '})
                }else res.status(401).json({message : 'user not found ' }) 
           }catch(err){
                res.status(501).json(err.message)
           }
-     } else res.status(400).json({message : 'bad request'})
 })
+const verifySession = (req,res,next)=>{
+     let refreshToken = req.header('Refresh-Token')
+     req.refreshToken = refreshtoken;
+     User.find({  })
+     next()
+}
+router.post('/auth/create-new-access-token', verifySession ,(req,res)=>{
+     res.status(200).json({ message : 'successfully control'})
+})
+
+var generateRefreshToken = async (user, payload)=>{
+     try{
+          if(user.sessions.length == 0){
+               let refreshtoken = await jwt.sign(payload , 'randomstring' , { expiresIn : '2h' })
+               await user.sessions.push({ token : token })
+               await user.save()
+               return refreshtoken
+          }else{
+               let refreshtoken = user.sessions[0].token
+               return refreshtoken
+          }
+     }catch(err){
+          console.log(err.message)
+     }
+}
+
 // update user
 router.patch('/update', authMiddleware , async (req,res)=>{
      try{

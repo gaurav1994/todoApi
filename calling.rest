@@ -1,0 +1,29 @@
+GET http://localhost:3000/lists
+Content-Type: application/json
+
+###
+
+POST http://localhost:3000/users/signup
+Content-Type: application/json
+
+{
+     "username" : "abc",
+     "email" : "abc@gmail.com",
+     "password" : "abc"
+}
+
+###
+
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+     "username" : "abc",
+     "password" : "abc"
+}
+
+###
+
+POST http://localhost:3000/users/auth/create-new-access-token
+Content-Type: application/json
+Refresh-Token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJlOTQ5MmI4NmY1NjI4Y2NjOWI2NTEiLCJ1c2VybmFtZSI6ImFiYyIsImVtYWlsIjoiYWJjQGdtYWlsLmNvbSIsImlhdCI6MTU4OTU2Mzc3OSwiZXhwIjoxNTg5NTcwOTc5fQ.Zl_JEDJvtFZ3ll-KFmEN1uIZRRdzwtoGrNrT-w2vjyY
