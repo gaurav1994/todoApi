@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user-model');
 const authMiddleware = require('../utils/auth-middleware')
+const passport = require('passport')
 
 router.post('/signup' , async (req,res)=>{
      var { username , email, password } = req.body;
@@ -33,7 +34,7 @@ router.post('/login' , async  (req,res)=>{
                               username : user.username,
                               email : user.email
                          }
-                         var jsontoken = await jwt.sign( payload , process.env.PUBLIC_SECRET, { expiresIn : '50s' } )
+                         var jsontoken = await jwt.sign( payload , process.env.PUBLIC_SECRET, { expiresIn : '1h' } )
                          var refreshToken = await generateRefreshToken(user, payload)
                          res.status(200).json({ message : 'user found', theme : user.theme ,  
                                                             token : 'Bearer '+ jsontoken , refreshToken : refreshToken })
@@ -68,6 +69,14 @@ var generateRefreshToken = async (user, payload)=>{
           console.log(err.message)
      }
 }
+
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+  
+router.get('/auth/google/callback', passport.authenticate('google'),
+  function(req, res) {
+    console.log( req.isAuthenticated() )
+    res.status(200).json({ message : "successfully login" })
+  });
 
 // update user
 router.patch('/update', authMiddleware , async (req,res)=>{

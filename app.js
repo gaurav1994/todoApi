@@ -6,13 +6,16 @@ const cors = require('cors');
 const app = express();
 const passport = require('passport');
 
+app.use(cors());
 const listRoute = require('./routes/list-route')
 const taskRoute = require('./routes/task-route')
 const userRoute = require('./routes/user-route')
 
+
+
 require('./passport/passport')
 
-app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : true}));
  
